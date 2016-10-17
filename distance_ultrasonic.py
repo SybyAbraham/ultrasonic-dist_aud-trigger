@@ -120,7 +120,6 @@ def distance_average():
 		div += 1
 	
 	if div == 0:
-	   print(colored("Error. Self-ping throughout averaging.", "red")
 	   return (nearDistance)
 
 	avgDist = d1 + d2 + d3
