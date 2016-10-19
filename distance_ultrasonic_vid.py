@@ -1,8 +1,8 @@
 from __future__ import print_function
 from omxplayer import OMXPlayer
+from termcolor import colored
 import RPi.GPIO as GPIO
 import time, sys
-from termcolor import colored
 
 # Raspberry Pi GPIO Setup Stuff
 GPIO.setmode (GPIO.BCM)
@@ -192,6 +192,10 @@ try:
 			time.sleep(1)            
 		
 except KeyboardInterrupt:
+	print(colored("Cleaning GPIO...", "yellow"))
 	GPIO.cleanup()
+	print(colored("OK", "green"))
+	print(colored("Killing OMXPlayer...", "yellow"))
 	player.quit()	# Kill the `omxplayer` process gracefully.
-	print(colored("Exiting.", "red"))
+	print(colored("OK", "green"))
+	print(colored("Exiting...", "red"))
