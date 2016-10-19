@@ -73,22 +73,22 @@ def get_distance():
 def fadeOut(rateO):
 	volO = 1.0
 	while volO > 0:
-	volO -= 0.01
-	volO = round(volO, 2)
-	time.sleep(rateO)
-	pygame.mixer.music.set_volume(volO)
-	print(colored('Fading out: ', 'green'), volO, end='\r')
-	sys.stdout.flush()
+		volO -= 0.01
+		volO = round(volO, 2)
+		time.sleep(rateO)
+		pygame.mixer.music.set_volume(volO)
+		print(colored('Fading out: ', 'green'), volO, end='\r')
+		sys.stdout.flush()
 	
 def fadeIn(rateI):
 	volI = 0.0
 	while volI < 1:
-	volI += 0.01
-	volI = round(volI, 2)
-	time.sleep(rateI)
-	pygame.mixer.music.set_volume(volI)
-	print(colored('Fading in: ', 'green'), volI, end='\r')
-	sys.stdout.flush()
+		volI += 0.01
+		volI = round(volI, 2)
+		time.sleep(rateI)
+		pygame.mixer.music.set_volume(volI)
+		print(colored('Fading in: ', 'green'), volI, end='\r')
+		sys.stdout.flush()
    
 print(colored("Trigger Distance is set to: ", 'green'), colored(triggerDistance, 'green'))
 
