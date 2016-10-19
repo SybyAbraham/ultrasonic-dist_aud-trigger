@@ -88,27 +88,30 @@ def fadeIn(rateI):
    
 print(colored("Trigger Distance is set to: ", 'green'), colored(triggerDistance, 'green'))
 
-# Take three distance measurements and average them. Has self-ping error detection written into this function.
+# Take three distance measurements and average them. 
+# Has self-ping error detection written into this function to prevent potential contamination with an erroneous reading.
 def distance_average():
-	c1 = get_distance()
 	div = 0
-	if c1 < nearDistance:
+	c1 = get_distance()
+	if c1 <= nearDistance:
 		print("Self-ping while averaging. 1.")
 		d1 = 0
 		div = 0 
 	else:
 	  d1 = c1
 	  div += 1
+
 	c2 = get_distance()
-	if c2 < nearDistance:
+	if c2 <= nearDistance:
 		print("Self-ping while averaging. 2.")  
 		d2 = 0
 		div = 0
 	else:
 		d2 = c2
 		div += 1
+
 	c3 = get_distance()
-	if c3 < nearDistance:
+	if c3 <= nearDistance:
 		print("Self-ping while averaging. 3.")
 		d3 = 0
 		div = 0
@@ -177,7 +180,6 @@ try:
 				sys.stdout.flush()
 				continue
 			else:
-				print('\n')
 				fadeOut(0.02)
 				GPIO.output(led, False)
 				pygame.mixer.music.pause()	# This needs to be changed to the OMXWrapper API
