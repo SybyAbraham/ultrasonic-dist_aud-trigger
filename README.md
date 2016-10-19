@@ -1,1 +1,1 @@
-# Distance/Proximity based Video Player
+# Distance/Proximity based Video Player based on OMXPlayer
