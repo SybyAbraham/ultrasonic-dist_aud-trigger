@@ -72,7 +72,7 @@ def fadeOut(rateO):
 	volO -= 0.01
 	volO = round(volO, 2)
 	time.sleep(rateO)
-	pygame.mixer.music.set_volume(volO)	# This needs to be changed to the OMXWrapper API
+#	pygame.mixer.music.set_volume(volO)	# This needs to be changed to the OMXWrapper API
 	print(colored('Fading out: ', 'green'), volO, end='\r')
 	sys.stdout.flush()
 	
@@ -82,7 +82,7 @@ def fadeIn(rateI):
 	volI += 0.01
 	volI = round(volI, 2)
 	time.sleep(rateI)
-	pygame.mixer.music.set_volume(volI)	# This needs to be changed to the OMXWrapper API
+#	pygame.mixer.music.set_volume(volI)	# This needs to be changed to the OMXWrapper API
 	print(colored('Fading in: ', 'green'), volI, end='\r')
 	sys.stdout.flush()
    
@@ -148,7 +148,7 @@ try:
 
 	while True:
 
-	logicDistance = distance_average()
+	logicDistance = distance_average()	# Single function call for control flow
 
 		if logicDistance == 1000:
 			print(colored("Sensor Error", 'red'))
@@ -157,31 +157,27 @@ try:
 			print(colored("Sensor Self Ping Detected", "red"))
 		
 		elif logicDistance == -5:
-			print(colored("Self ping while averaging. Retrying...", "red"))
+			print(colored("Self ping throughout averaging. Retrying...", "red"))
 
 		elif logicDistance < triggerDistance:    
 			print ("Distance : ", logicDistance, "cm" , colored(" | Resuming Audio", 'green'))
 			if rewind_counter > 30:
 				rewind_counter = 0
-				pygame.mixer.music.play(-1)	# This needs to be changed to the OMXWrapper API
-				GPIO.output(led, True)
+			#	pygame.mixer.music.play(-1)	# This needs to be changed to the OMXWrapper API
 				print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
 			else: 
-				GPIO.output(led, True)
-				pygame.mixer.music.unpause()	# This needs to be changed to the OMXWrapper API
+			#	pygame.mixer.music.unpause()	# This needs to be changed to the OMXWrapper API
 				fadeIn(0.02)
 				print(colored('Fade in complete.', 'green'))
 				rewind_counter = 0
 				print("Target detected at  ", logicDistance, " cm")
 				print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
 			while smoothDistance() < triggerDistance:
-				ledBlink()
 				print(colored('Current distance:', 'green'),distance_average(),' cm',end='\r')
 				sys.stdout.flush()
 				continue
 			else:
 				fadeOut(0.02)
-				GPIO.output(led, False)
 				pygame.mixer.music.pause()	# This needs to be changed to the OMXWrapper API
 				print(colored('Fade out complete.', 'green'))
 				pygame.mixer.music.set_volume(1.0)	# This needs to be changed to the OMXWrapper API
@@ -195,7 +191,7 @@ except KeyboardInterrupt:
 	print(colored("Cleaning GPIO...", "yellow"))
 	GPIO.cleanup()
 	print(colored("OK", "green"))
-	print(colored("Killing OMXPlayer...", "yellow"))
+	print(colored("Quiting OMXPlayer...", "yellow"))
 	player.quit()	# Kill the `omxplayer` process gracefully.
 	print(colored("OK", "green"))
 	print(colored("Exiting...", "red"))
