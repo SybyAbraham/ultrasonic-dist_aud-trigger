@@ -7,7 +7,6 @@ import time, sys
 # Raspberry Pi GPIO Setup Stuff
 GPIO.setmode (GPIO.BCM)
 GPIO.setup(trig, GPIO.OUT)
-GPIO.setup(led, GPIO.OUT)    
 GPIO.setup(echo, GPIO.IN)
 GPIO.setwarnings(False)
 
