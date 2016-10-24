@@ -162,12 +162,15 @@ try:
 			print ("Distance : ", logicDistance, "cm" , colored(" | Resuming Audio", 'green'))
 			fadeIn(0.02)
 			vol = 100
+			rewind_counter = 0
 			print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
 			while smoothDistance() < triggerDistance:
 				print(colored('Current distance:', 'green'),distance_average(),' cm',end='\r')
 				sys.stdout.flush()
 				continue
 		elif vol == 0:
+			print(colored("Time since last playback: ", "yellow"), rewind_counter, colored(" seconds", "yellow"))
+			rewind_counter += 1
 			continue
 		else:
 			fadeOut(0.02)
