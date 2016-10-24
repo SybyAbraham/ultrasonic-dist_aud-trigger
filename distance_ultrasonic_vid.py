@@ -4,12 +4,6 @@ from termcolor import colored
 import RPi.GPIO as GPIO
 import time, sys
 
-# Raspberry Pi GPIO Setup Stuff
-GPIO.setmode (GPIO.BCM)
-GPIO.setup(trig, GPIO.OUT)
-GPIO.setup(echo, GPIO.IN)
-GPIO.setwarnings(False)
-
 # Pin and varible assignments
 trig = 23
 echo = 26
@@ -17,10 +11,16 @@ triggerDistance = 60		# Trigger distance to trigger video.
 nearDistance = 2		# Will display a self-ping error if below this value.
 rewind_counter = 0		# Counts number of times through the control flow.
 
+# Raspberry Pi GPIO Setup Stuff
+GPIO.setmode (GPIO.BCM)
+GPIO.setup(trig, GPIO.OUT)
+GPIO.setup(echo, GPIO.IN)
+GPIO.setwarnings(False)
+
 # Initialize OMXPlayer
-player = OMXPlayer('path/to/file.mp4')
+player = OMXPlayer('/home/pi/Desktop/dolby_leaf-DWEU.mkv')
 player.play()
-sleep(5)
+time.sleep(5)
 player.pause()
 
 def get_distance():
@@ -68,22 +68,22 @@ def get_distance():
 def fadeOut(rateO):
 	volO = 1.0
 	while volO > 0:
-	volO -= 0.01
-	volO = round(volO, 2)
-	time.sleep(rateO)
-#	pygame.mixer.music.set_volume(volO)	# This needs to be changed to the OMXWrapper API
-	print(colored('Fading out: ', 'green'), volO, end='\r')
-	sys.stdout.flush()
+		volO -= 0.01
+		volO = round(volO, 2)
+		time.sleep(rateO)
+#		pygame.mixer.music.set_volume(volO)	# This needs to be changed to the OMXWrapper API
+		print(colored('Fading out: ', 'green'), volO, end='\r')
+		sys.stdout.flush()
 	
 def fadeIn(rateI):
 	volI = 0.0
 	while volI < 1:
-	volI += 0.01
-	volI = round(volI, 2)
-	time.sleep(rateI)
-#	pygame.mixer.music.set_volume(volI)	# This needs to be changed to the OMXWrapper API
-	print(colored('Fading in: ', 'green'), volI, end='\r')
-	sys.stdout.flush()
+		volI += 0.01
+		volI = round(volI, 2)
+		time.sleep(rateI)
+#		pygame.mixer.music.set_volume(volI)	# This needs to be changed to the OMXWrapper API
+		print(colored('Fading in: ', 'green'), volI, end='\r')
+		sys.stdout.flush()
    
 print(colored("Trigger Distance is set to: ", 'green'), colored(triggerDistance, 'green'))
 
@@ -147,7 +147,7 @@ try:
 
 	while True:
 
-	logicDistance = distance_average()	# Single function call for control flow
+		logicDistance = distance_average()	# Single function call for control flow
 
 		if logicDistance == 1000:
 			print(colored("Sensor Error", 'red'))
