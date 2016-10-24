@@ -178,6 +178,7 @@ try:
 			print(colored('Fade out complete.', 'green'))			
 		
 except KeyboardInterrupt:
+	print(colored("Keyboard Interrupt!", "red"))
 	print(colored("Cleaning GPIO...", "yellow"))
 	GPIO.cleanup()
 	print(colored("OK", "green"))
