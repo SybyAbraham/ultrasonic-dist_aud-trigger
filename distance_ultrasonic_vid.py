@@ -1,5 +1,5 @@
 from __future__ import print_function
-from omxplayer import OMXPlayer
+import alsaaudio
 from termcolor import colored
 import RPi.GPIO as GPIO
 import time, sys
@@ -7,21 +7,16 @@ import time, sys
 # Pin and varible assignments
 trig = 23
 echo = 26
-triggerDistance = 60		# Trigger distance to trigger video.
+triggerDistance = 60		# Trigger distance to trigger fades.
 nearDistance = 2		# Will display a self-ping error if below this value.
 rewind_counter = 0		# Counts number of times through the control flow.
+m = alsaaudio.Mixer("PCM")
 
 # Raspberry Pi GPIO Setup Stuff
 GPIO.setmode (GPIO.BCM)
 GPIO.setup(trig, GPIO.OUT)
 GPIO.setup(echo, GPIO.IN)
 GPIO.setwarnings(False)
-
-# Initialize OMXPlayer
-player = OMXPlayer('/home/pi/Desktop/dolby_leaf-DWEU.mkv')
-player.play()
-time.sleep(5)
-player.pause()
 
 def get_distance():
 	global trig, echo
@@ -66,22 +61,16 @@ def get_distance():
 	return (distance)
 
 def fadeOut(rateO):
-	volO = 1.0
-	while volO > 0:
-		volO -= 0.01
-		volO = round(volO, 2)
+	for volO in range(100, -1, -1):
+		m.setvolume(volO)
 		time.sleep(rateO)
-#		pygame.mixer.music.set_volume(volO)	# This needs to be changed to the OMXWrapper API
 		print(colored('Fading out: ', 'green'), volO, end='\r')
 		sys.stdout.flush()
-	
+
 def fadeIn(rateI):
-	volI = 0.0
-	while volI < 1:
-		volI += 0.01
-		volI = round(volI, 2)
+	for volI in range(0, 101):
+		m.setvolume(volI)
 		time.sleep(rateI)
-#		pygame.mixer.music.set_volume(volI)	# This needs to be changed to the OMXWrapper API
 		print(colored('Fading in: ', 'green'), volI, end='\r')
 		sys.stdout.flush()
    
@@ -189,8 +178,5 @@ try:
 except KeyboardInterrupt:
 	print(colored("Cleaning GPIO...", "yellow"))
 	GPIO.cleanup()
-	print(colored("OK", "green"))
-	print(colored("Quiting OMXPlayer...", "yellow"))
-	player.quit()	# Kill the `omxplayer` process gracefully.
 	print(colored("OK", "green"))
 	print(colored("Exiting...", "red"))
