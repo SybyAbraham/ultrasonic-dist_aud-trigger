@@ -167,7 +167,7 @@ try:
 				print(colored('Current distance:', 'green'),distance_average(),' cm',end='\r')
 				sys.stdout.flush()
 				continue
-		elif vol = 0:
+		elif vol == 0:
 			continue
 		else:
 			fadeOut(0.02)
