@@ -10,11 +10,11 @@ print("Loading...")
 
 # Pin and varible assignments
 trig = 23
-echo = 26
+echo = 24
 triggerDistance = 60		# Trigger distance to trigger fades.
 nearDistance = 2		# Will display a self-ping error if below this value.
 rewind_counter = 0		# Counts number of times through the control flow.
-m = alsaaudio.Mixer("PCM")
+m = alsaaudio.Mixer('Speaker', cardindex=1)
 vol = 100
 
 # Set volume to 100%
@@ -160,7 +160,7 @@ try:
 		# Actual control flow for distance triggered fades
 		elif logicDistance < triggerDistance:    
 			print ("Distance : ", logicDistance, "cm" , colored(" | Resuming Audio", 'green'))
-			fadeIn(0.02)
+			fadeIn(0.01)
 			vol = 100
 			rewind_counter = 0
 			print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
@@ -169,13 +169,16 @@ try:
 				sys.stdout.flush()
 				continue
 		elif vol == 0:
-			print(colored("Time since last playback: ", "yellow"), rewind_counter, colored(" seconds", "yellow"))
+			print(colored("Time since last playback: ", "yellow"), rewind_counter, colored(" seconds", "yellow"),)
+			print(colored("Current Distance: ", 'green'), logicDistance, colored("cm", 'green'))
+			time.sleep(1)
 			rewind_counter += 1
 			continue
 		else:
 			fadeOut(0.02)
 			vol = 0
-			print(colored('Fade out complete.', 'green'))			
+			print(colored('Fade out complete.', 'green'))
+		
 		
 except KeyboardInterrupt:
 	print(colored("Keyboard Interrupt!", "red"))
