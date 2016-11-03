@@ -6,6 +6,7 @@ import pygame
 
 pygame.mixer.init()
 pygame.mixer.music.load("/home/pi/Desktop/lucky_charms.ogg")
+pygame.mixer.music.set_volume(0)
 pygame.mixer.music.play(-1)
 
 GPIO.setmode (GPIO.BCM)
