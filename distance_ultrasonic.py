@@ -7,26 +7,19 @@ import pygame
 pygame.mixer.init()
 pygame.mixer.music.load("/home/pi/Desktop/FILENAME.EXT")
 pygame.mixer.music.play(-1)
-pygame.mixer.music.pause()
 
 GPIO.setmode (GPIO.BCM)
 
 trig = 23
-echo = 26
-led = 24
+echo = 24
 triggerDistance = 60
 nearDistance = 2
 rewind_counter = 0
 
-GPIO.setup(trig, GPIO.OUT)
-GPIO.setup(led, GPIO.OUT)    
-GPIO.setup(echo, GPIO.IN)
 GPIO.setwarnings(False)
+GPIO.setup(trig, GPIO.OUT)
+GPIO.setup(echo, GPIO.IN)
 
-def ledBlink():
-	GPIO.output(led, True)
-	time.sleep(0.3)
-	GPIO.output(led, False)
 
 def get_distance():
 	global trig, echo
@@ -120,7 +113,7 @@ def distance_average():
 		div += 1
 	
 	if div == 0:
-	   return (nearDistance)
+	   return -5
 
 	avgDist = d1 + d2 + d3
 	
@@ -156,38 +149,28 @@ try:
 		elif logicDistance <= nearDistance:
 			print(colored("Sensor Self Ping Detected", "red"))
 
+		elif logicDistance == -5:
+			print(colored("Self ping throughout averaging. Retrying...", "red"))
+
 		elif logicDistance < triggerDistance:    
 			print ("Distance : ", logicDistance, "cm" , colored(" | Resuming Audio", 'green'))
-			if rewind_counter > 30:
-				rewind_counter = 0
-				pygame.mixer.music.play(-1)
-				GPIO.output(led, True)
-				print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
-			else: 
-				GPIO.output(led, True)
-				pygame.mixer.music.unpause()
-				fadeIn(0.02)
-				print(colored('Fade in complete.', 'green'))
-				rewind_counter = 0
-				print("Target detected at  ", logicDistance, " cm")
-				print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
+			fadeIn(0.02)
+			print(colored('Fade in complete.', 'green'))
+			rewind_counter = 0
+			print("Target detected at  ", logicDistance, " cm")
+			print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
 			while smoothDistance() < triggerDistance:
-				ledBlink()
 				print(colored('Current distance:', 'green'),distance_average(),' cm',end='\r')
 				sys.stdout.flush()
 				continue
 			else:
 				print('\n')
 				fadeOut(0.02)
-				GPIO.output(led, False)
-				pygame.mixer.music.pause()
 				print(colored('Fade out complete.', 'green'))
-				pygame.mixer.music.set_volume(1.0)
 		else:
 			print ("Distance : ", logicDistance, "cm", colored(" | Audio Paused", "yellow"))
 			rewind_counter += 1
-			print(colored("Elapsed time since last playback reset: ", "yellow"), rewind_counter, colored("seconds", "yellow"))
-			time.sleep(1)            
+			print(colored("Elapsed time since last playback : ", "yellow"), rewind_counter, colored("seconds", "yellow"))
 		
 except KeyboardInterrupt:
 	GPIO.cleanup()
