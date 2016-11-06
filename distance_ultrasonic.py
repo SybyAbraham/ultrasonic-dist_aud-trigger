@@ -91,6 +91,10 @@ def fadeIn(rateI):
 print(colored("Trigger Distance is set to: ", 'green'), colored(triggerDistance, 'green'))
 
 def distance_average():
+
+	if get_distance >= 600:
+		return 1000
+
 	c1 = get_distance()
 	div = 0
 	if c1 < nearDistance:
