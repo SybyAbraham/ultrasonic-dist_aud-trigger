@@ -14,6 +14,7 @@ trig = 23
 echo = 24
 triggerDistance = 60
 nearDistance = 2
+clipDistance = 200
 rewind_counter = 0
 
 GPIO.setwarnings(False)
@@ -60,6 +61,9 @@ def get_distance():
 	distance = (time2 - time1) / 0.00000295 / 2 / 10
   
 	distance = round(distance, 2)
+
+	if distance > clipDistance:
+		return clipDistance
 
 	return (distance)
 
