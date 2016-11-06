@@ -5,7 +5,8 @@ from termcolor import colored
 import pygame
 
 pygame.mixer.init()
-pygame.mixer.music.load("/home/pi/Desktop/FILENAME.EXT")
+pygame.mixer.music.load("/home/pi/Desktop/lucky_charms.ogg")
+pygame.mixer.music.set_volume(0)
 pygame.mixer.music.play(-1)
 
 GPIO.setmode (GPIO.BCM)
@@ -145,7 +146,7 @@ try:
 
 	while True:
 
-	logicDistance = distance_average()
+		logicDistance = distance_average()
 
 		if logicDistance == 1000:
 			print(colored("Sensor Error", 'red'))
@@ -175,6 +176,7 @@ try:
 			print ("Distance : ", logicDistance, "cm", colored(" | Audio Paused", "yellow"))
 			rewind_counter += 1
 			print(colored("Elapsed time since last playback : ", "yellow"), rewind_counter, colored("seconds", "yellow"))
+			time.sleep(1)
 		
 except KeyboardInterrupt:
 	GPIO.cleanup()
