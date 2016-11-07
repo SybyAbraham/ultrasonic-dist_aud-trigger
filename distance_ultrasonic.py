@@ -5,7 +5,7 @@ from termcolor import colored
 import pygame
 
 pygame.mixer.init(frequency=44100, size=-16, channels=1, buffer=4096)
-pygame.mixer.music.load("/home/pi/Desktop/cheryl_audio.ogg")
+pygame.mixer.music.load("/home/pi/Desktop/lucky_charms.ogg")
 pygame.mixer.music.set_volume(0)
 pygame.mixer.music.play(-1)
 
@@ -15,7 +15,7 @@ trig = 23
 echo = 24
 triggerDistance = 60
 nearDistance = 2
-clipDistance = 200
+clipDistance = 300
 rewind_counter = 0
 
 GPIO.setwarnings(False)
@@ -121,7 +121,7 @@ def distance_average():
 	if div == 0:
 	   return -5
 
-	if d1 or d2 or d3 > 500:
+	if d1 > 500 or d2 > 500 or d3 > 500:
 		return 1000
 
 	avgDist = d1 + d2 + d3
@@ -144,7 +144,7 @@ def smoothDistance():
 	smoothD = smoothD / 3
 	smoothD = round(smoothD, 2)
 
-	if sd1 or sd2 or sd3 == 1000:
+	if sd1 == 1000 or sd2 == 1000 or sd3 == 1000:
 		return -8
 
 	return smoothD
@@ -171,8 +171,12 @@ try:
 			rewind_counter = 0
 			print("Target detected at  ", logicDistance, " cm")
 			print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
-			while smoothDistance() < triggerDistance or smoothDistance == -8:
-				print(colored('Current distance:', 'green'),smoothDistance(),' cm',end='\r')
+			while smoothDistance() < triggerDistance:
+				smoothcap = smoothDistance()
+                                if smoothcap == -8:
+					print(colored("Error Correction Triggered. Assuming trigger distance until next accurate reading.", "magenta"))
+				else:
+                                        print(colored('Current distance:', 'green'),smoothDistance(),' cm',end='\r')
 				sys.stdout.flush()
 				continue
 			else:
@@ -183,7 +187,7 @@ try:
 			print ("Distance : ", logicDistance, "cm", colored(" | Audio Paused", "yellow"))
 			rewind_counter += 1
 			print(colored("Elapsed time since last playback : ", "yellow"), rewind_counter, colored("seconds", "yellow"))
-			time.sleep(1)
+		time.sleep(1)
 		
 except KeyboardInterrupt:
 	GPIO.cleanup()
