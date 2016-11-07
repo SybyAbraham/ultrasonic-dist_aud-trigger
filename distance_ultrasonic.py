@@ -92,9 +92,6 @@ print(colored("Trigger Distance is set to: ", 'green'), colored(triggerDistance,
 
 def distance_average():
 
-	if get_distance >= 600:
-		return 1000
-
 	c1 = get_distance()
 	div = 0
 	if c1 < nearDistance:
@@ -124,6 +121,9 @@ def distance_average():
 	if div == 0:
 	   return -5
 
+	if d1 or d2 or d3 > 500:
+		return 1000
+
 	avgDist = d1 + d2 + d3
 	
 	avgDist = avgDist / 3
@@ -143,6 +143,9 @@ def smoothDistance():
 	smoothD = sd1 + sd2 + sd3
 	smoothD = smoothD / 3
 	smoothD = round(smoothD, 2)
+
+	if sd1 or sd2 or sd3 == 1000:
+		return -8
 
 	return smoothD
 
@@ -168,8 +171,8 @@ try:
 			rewind_counter = 0
 			print("Target detected at  ", logicDistance, " cm")
 			print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
-			while smoothDistance() < triggerDistance:
-				print(colored('Current distance:', 'green'),distance_average(),' cm',end='\r')
+			while smoothDistance() < triggerDistance or smoothDistance == -8:
+				print(colored('Current distance:', 'green'),smoothDistance(),' cm',end='\r')
 				sys.stdout.flush()
 				continue
 			else:
