@@ -5,7 +5,7 @@ from termcolor import colored
 import pygame
 
 pygame.mixer.init(frequency=44100, size=-16, channels=1, buffer=4096)
-pygame.mixer.music.load("/home/pi/Desktop/lucky_charms.ogg")
+pygame.mixer.music.load("FILENAME.EXT")
 pygame.mixer.music.set_volume(0)
 pygame.mixer.music.play(-1)
 
@@ -121,8 +121,8 @@ def distance_average():
 	if div == 0:
 	   return -5
 
-	if d1 > 500 or d2 > 500 or d3 > 500:
-		return 1000
+	if d1 > 500 or d2 > 500 or d3 > 500:	# Prevent averaging contamination with error codes. 
+		return -4	# Return averaging error.
 
 	avgDist = d1 + d2 + d3
 	
@@ -144,8 +144,8 @@ def smoothDistance():
 	smoothD = smoothD / 3
 	smoothD = round(smoothD, 2)
 
-	if sd1 == 1000 or sd2 == 1000 or sd3 == 1000:
-		return -8
+	if sd1 == 1000 or sd2 == 1000 or sd3 == 1000: # Prevent averaging contamination with error codes. 
+		return -8	# Return smooth averaging error.
 
 	return smoothD
 
@@ -157,6 +157,9 @@ try:
 
 		if logicDistance == 1000:
 			print(colored("Sensor Error", 'red'))
+
+		elif logicDistance == -4:
+			print(colored("Averaging failed due to sensor error.", "red"))
 
 		elif logicDistance <= nearDistance:
 			print(colored("Sensor Self Ping Detected", "red"))
@@ -173,10 +176,10 @@ try:
 			print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
 			while smoothDistance() < triggerDistance:
 				smoothcap = smoothDistance()
-                                if smoothcap == -8:
+                if smoothcap == -8:
 					print(colored("Error Correction Triggered. Assuming trigger distance until next accurate reading.", "magenta"))
 				else:
-                                        print(colored('Current distance:', 'green'),smoothDistance(),' cm',end='\r')
+                	print(colored('Current distance:', 'green'),smoothDistance(),' cm',end='\r')
 				sys.stdout.flush()
 				continue
 			else:
