@@ -1,15 +1,9 @@
 from __future__ import print_function
+from omxplayer import OMXPlayer
 import RPi.GPIO as GPIO
 import time, sys
 from termcolor import colored
 import pygame
-
-pygame.mixer.init(frequency=44100, size=-16, channels=1, buffer=4096)
-pygame.mixer.music.load("FILENAME.EXT")
-pygame.mixer.music.set_volume(0)
-pygame.mixer.music.play(-1)
-
-GPIO.setmode (GPIO.BCM)
 
 trig = 23
 echo = 24
@@ -19,9 +13,19 @@ clipDistance = 300
 rewind_counter = 0
 
 GPIO.setwarnings(False)
+GPIO.setmode (GPIO.BCM)
 GPIO.setup(trig, GPIO.OUT)
 GPIO.setup(echo, GPIO.IN)
 
+pygame.mixer.init(frequency=44100, size=-16, channels=1, buffer=4096)
+pygame.mixer.music.load("/home/pi/Desktop/lucky_charms.ogg")
+pygame.mixer.music.set_volume(0)
+
+OMXlaunchParams = ['--no-osd', '--loop']
+player = OMXPlayer('/home/pi/Desktop/Marie.mp4', args=OMXlaunchParams)
+
+pygame.mixer.music.play()
+player.play()
 
 def get_distance():
 	global trig, echo
@@ -132,6 +136,23 @@ def distance_average():
 
 	return avgDist
 
+def sampler(samples):
+	sampleL = []
+	err = 0
+	for i in range(0, samples):
+		sdist = get_distance()
+		if sdist != 1000:
+			sampleL.append(sdist)
+		else:
+			err += 1
+	if len(sampleL) == 0:
+		print ("Rapid averaging failed.")
+	else:
+		sDist = (sum(sampleL) / len(sampleL))
+		sDist = round(sDist, 2)
+		print (err, " errors occured during rapid averaging.")
+		return sDist
+	
 def smoothDistance():
 	sd1 = get_distance()
 	time.sleep(1)
@@ -152,8 +173,11 @@ def smoothDistance():
 try: 
 
 	while True:
+                if pygame.mixer.music.get_busy() == 0:
+                        player.set_position(0)
+                        pygame.mixer.music.play()
 
-		logicDistance = distance_average()
+		logicDistance = sampler(20)
 
 		if logicDistance == 1000:
 			print(colored("Sensor Error", 'red'))
@@ -174,14 +198,17 @@ try:
 			rewind_counter = 0
 			print("Target detected at  ", logicDistance, " cm")
 			print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
-			while smoothDistance() < triggerDistance:
+			while sampler(100) < triggerDistance:
 				smoothcap = smoothDistance()
-                if smoothcap == -8:
+				if pygame.mixer.music.get_busy() == 0:
+                                        player.set_position(0)
+                                        pygame.mixer.music.play()
+                		if smoothcap == -8:
 					print(colored("Error Correction Triggered. Assuming trigger distance until next accurate reading.", "magenta"))
 				else:
-                	print(colored('Current distance:', 'green'),smoothDistance(),' cm',end='\r')
-				sys.stdout.flush()
-				continue
+      					print(colored('Current distance:', 'green'),smoothDistance(),' cm',end='\r')
+					sys.stdout.flush()
+					continue
 			else:
 				print('\n')
 				fadeOut(0.02)
