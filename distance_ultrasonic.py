@@ -102,50 +102,6 @@ def fadeIn(rateI):
 		print(colored('Fading in: ', 'green'), volI, end='\r')
 		sys.stdout.flush()
    
-print(colored("Trigger Distance is set to: ", 'green'), colored(triggerDistance, 'green'))
-
-def distance_average():
-
-	c1 = get_distance()
-	div = 0
-	if c1 < nearDistance:
-		print("Self-ping while averaging. 1.")
-		d1 = 0
-		div = 0 
-	else:
-	  d1 = c1
-	  div += 1
-	c2 = get_distance()
-	if c2 < nearDistance:
-		print("Self-ping while averaging. 2.")  
-		d2 = 0
-		div = 0
-	else:
-		d2 = c2
-		div += 1
-	c3 = get_distance()
-	if c3 < nearDistance:
-		print("Self-ping while averaging. 3.")
-		d3 = 0
-		div = 0
-	else:
-		d3 = c3
-		div += 1
-	
-	if div == 0:
-	   return -5
-
-	if d1 > 500 or d2 > 500 or d3 > 500:	# Prevent averaging contamination with error codes. 
-		return -4	# Return averaging error.
-
-	avgDist = d1 + d2 + d3
-	
-	avgDist = avgDist / 3
- 
-	avgDist = round(avgDist, 2)
-
-	return avgDist
-
 def sampler(samples):
 	sampleL = []
 	err = 0
@@ -162,23 +118,6 @@ def sampler(samples):
 		sDist = round(sDist, 2)
 		print (err, " errors occured during rapid averaging.")
 		return sDist
-	
-def smoothDistance():
-	sd1 = get_distance()
-	time.sleep(1)
-	sd2 = get_distance()
-	time.sleep(1)
-	sd3 = get_distance()
-	time.sleep(1)
-
-	smoothD = sd1 + sd2 + sd3
-	smoothD = smoothD / 3
-	smoothD = round(smoothD, 2)
-
-	if sd1 == 1000 or sd2 == 1000 or sd3 == 1000: # Prevent averaging contamination with error codes. 
-		return -8	# Return smooth averaging error.
-
-	return smoothD
 
 try: 
 
