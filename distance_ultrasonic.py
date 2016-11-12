@@ -5,25 +5,35 @@ import time, sys
 from termcolor import colored
 import pygame
 
+# Pin and variable assignments
 trig = 23
 echo = 24
-triggerDistance = 60
-nearDistance = 2
-clipDistance = 300
-rewind_counter = 0
+triggerDistance = 60		# Trigger distance to trigger fades.
+nearDistance = 2			# Will display a self-ping error if reading falls below this value.
+clipDistance = 300		# Clip the reading to this value if reading falls above this value.
+rewind_counter = 0		# Counts the number of times the code has passed through the control flow. 
 
+# Pretentious print statements
+print(colored("Proximity based audio fader using PyGame. Syby Abraham 2016.", "magenta"))
+print(colored("Loading...", "magenta"))
+print(colored("Trigger Distance is set to: ", 'green'), colored(triggerDistance, 'magenta'))
+
+# Raspberry Pi GPIO setup stuff
 GPIO.setwarnings(False)
 GPIO.setmode (GPIO.BCM)
 GPIO.setup(trig, GPIO.OUT)
 GPIO.setup(echo, GPIO.IN)
 
+# Initialize PyGame
 pygame.mixer.init(frequency=44100, size=-16, channels=1, buffer=4096)
-pygame.mixer.music.load("/home/pi/Desktop/lucky_charms.ogg")
+pygame.mixer.music.load("/home/pi/Desktop/FILE.EXT")
 pygame.mixer.music.set_volume(0)
 
+# Initialize OMXPlayer
 OMXlaunchParams = ['--no-osd', '--loop']
-player = OMXPlayer('/home/pi/Desktop/Marie.mp4', args=OMXlaunchParams)
+player = OMXPlayer('/home/pi/Desktop/FILE.EXT', args=OMXlaunchParams)
 
+# Play both audio and video
 pygame.mixer.music.play()
 player.play()
 
@@ -141,7 +151,7 @@ def sampler(samples):
 	err = 0
 	for i in range(0, samples):
 		sdist = get_distance()
-		if sdist != 1000:
+		if sdist != 1000 and sdist > nearDistance:
 			sampleL.append(sdist)
 		else:
 			err += 1
