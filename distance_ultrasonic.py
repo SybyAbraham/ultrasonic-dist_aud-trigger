@@ -9,7 +9,7 @@ import pygame
 trig = 23
 echo = 24
 triggerDistance = 60		# Trigger distance to trigger fades.
-nearDistance = 2			# Will display a self-ping error if reading falls below this value.
+nearDistance = 2		# Will display a self-ping error if reading falls below this value.
 clipDistance = 300		# Clip the reading to this value if reading falls above this value.
 rewind_counter = 0		# Counts the number of times the code has passed through the control flow. 
 
@@ -102,15 +102,17 @@ def fadeIn(rateI):
 		print(colored('Fading in: ', 'green'), volI, end='\r')
 		sys.stdout.flush()
    
-def sampler(samples):
+def sampler(samples, time):
 	sampleL = []
 	err = 0
 	for i in range(0, samples):
 		sdist = get_distance()
 		if sdist != 1000 and sdist > nearDistance:
 			sampleL.append(sdist)
+			time.sleep(time)
 		else:
 			err += 1
+			time.sleep(time)
 	if len(sampleL) == 0:
 		print ("Rapid averaging failed.")
 	else:
@@ -148,14 +150,14 @@ try:
 			print("Target detected at  ", logicDistance, " cm")
 			print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
 			while sampler(100) < triggerDistance:
-				smoothcap = smoothDistance()
+				smoothcap = sampler(3, 0)
 				if pygame.mixer.music.get_busy() == 0:
                                         player.set_position(0)
                                         pygame.mixer.music.play()
                 		if smoothcap == -8:
 					print(colored("Error Correction Triggered. Assuming trigger distance until next accurate reading.", "magenta"))
 				else:
-      					print(colored('Current distance:', 'green'),smoothDistance(),' cm',end='\r')
+      					print(colored('Current distance:', 'green'),smoothcap,' cm',end='\r')
 					sys.stdout.flush()
 					continue
 			else:
