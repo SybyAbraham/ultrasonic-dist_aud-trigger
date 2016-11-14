@@ -30,7 +30,7 @@ pygame.mixer.music.load("/home/pi/Desktop/FILE.EXT")
 pygame.mixer.music.set_volume(0)
 
 # Initialize OMXPlayer
-OMXlaunchParams = ['--no-osd', '--loop']
+OMXlaunchParams = ['--no-osd', '--loop']	# Launch OMXPlayer with no OSD and loop the video.
 player = OMXPlayer('/home/pi/Desktop/FILE.EXT', args=OMXlaunchParams)
 
 # Play both audio and video
@@ -82,6 +82,7 @@ def get_distance():
 
 	return (distance)
 
+# PyGame fade out function
 def fadeOut(rateO):
 	volO = 1.0
 	while volO > 0:
@@ -91,7 +92,8 @@ def fadeOut(rateO):
 		pygame.mixer.music.set_volume(volO)
 		print(colored('Fading out: ', 'green'), volO, end='\r')
 		sys.stdout.flush()
-	
+		
+# PyGame fade in function	
 def fadeIn(rateI):
 	volI = 0.0
 	while volI < 1:
@@ -101,7 +103,10 @@ def fadeIn(rateI):
 		pygame.mixer.music.set_volume(volI)
 		print(colored('Fading in: ', 'green'), volI, end='\r')
 		sys.stdout.flush()
-   
+		
+# Sampling and averaging function   
+# Measures and puts the measurement into a list and then averages the values in the list for a final measurement output. 
+# Takes two arguments "samples" and "time", which sets the number of samples to take and wait time between each sample. 
 def sampler(samples, time):
 	sampleL = []
 	err = 0
@@ -115,6 +120,7 @@ def sampler(samples, time):
 			time.sleep(time)
 	if len(sampleL) == 0:
 		print ("Rapid averaging failed.")
+		return -8
 	else:
 		sDist = (sum(sampleL) / len(sampleL))
 		sDist = round(sDist, 2)
@@ -124,23 +130,19 @@ def sampler(samples, time):
 try: 
 
 	while True:
+		# If PyGame audio track has ended, restart the audio track and rewind the video back to start. 
                 if pygame.mixer.music.get_busy() == 0:
                         player.set_position(0)
                         pygame.mixer.music.play()
-
-		logicDistance = sampler(20)
+			
+		# Take twenty distance measurements without waiting between measurements and average them.
+		logicDistance = sampler(20) 
 
 		if logicDistance == 1000:
 			print(colored("Sensor Error", 'red'))
 
-		elif logicDistance == -4:
-			print(colored("Averaging failed due to sensor error.", "red"))
-
 		elif logicDistance <= nearDistance:
 			print(colored("Sensor Self Ping Detected", "red"))
-
-		elif logicDistance == -5:
-			print(colored("Self ping throughout averaging. Retrying...", "red"))
 
 		elif logicDistance < triggerDistance:    
 			print ("Distance : ", logicDistance, "cm" , colored(" | Resuming Audio", 'green'))
@@ -150,7 +152,7 @@ try:
 			print("Target detected at  ", logicDistance, " cm")
 			print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
 			while sampler(100) < triggerDistance:
-				smoothcap = sampler(3, 0)
+				smoothcap = sampler(100)
 				if pygame.mixer.music.get_busy() == 0:
                                         player.set_position(0)
                                         pygame.mixer.music.play()
