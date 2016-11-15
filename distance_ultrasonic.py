@@ -120,7 +120,7 @@ def sampler(samples, time):
 			time.sleep(time)
 	if len(sampleL) == 0:
 		print ("Rapid averaging failed.")
-		return -8
+		return 1000
 	else:
 		sDist = (sum(sampleL) / len(sampleL))
 		sDist = round(sDist, 2)
@@ -156,7 +156,7 @@ try:
 				if pygame.mixer.music.get_busy() == 0:
                                         player.set_position(0)
                                         pygame.mixer.music.play()
-                		if smoothcap == -8:
+                		if smoothcap == 1000:
 					print(colored("Error Correction Triggered. Assuming trigger distance until next accurate reading.", "magenta"))
 				else:
       					print(colored('Current distance:', 'green'),smoothcap,' cm',end='\r')
