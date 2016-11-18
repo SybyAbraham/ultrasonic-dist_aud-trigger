@@ -14,7 +14,7 @@ clipDistance = 300		# Clip the reading to this value if reading falls above this
 rewind_counter = 0		# Counts the number of times the code has passed through the control flow. 
 
 # Pretentious print statements
-print(colored("Proximity based audio fader using PyGame. Syby Abraham 2016.", "magenta"))
+print(colored("Proximity based audio fader using PyGame. Syby Abraham 2016.", "green"))
 print(colored("Loading...", "magenta"))
 print(colored("Trigger Distance is set to: ", 'green'), colored(triggerDistance, 'magenta'))
 
@@ -173,5 +173,8 @@ try:
 		time.sleep(1)
 		
 except KeyboardInterrupt:
+	print(colored("Quitting OMXPlayer...", "red"))
+	player.quit()
+	print(colored("Cleaning up GPIO...", "red"))
 	GPIO.cleanup()
 	print(colored("Exiting.", "red"))
