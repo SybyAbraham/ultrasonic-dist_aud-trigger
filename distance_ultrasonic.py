@@ -107,17 +107,17 @@ def fadeIn(rateI):
 # Sampling and averaging function   
 # Measures and puts the measurement into a list and then averages the values in the list for a final measurement output. 
 # Takes two arguments "samples" and "time", which sets the number of samples to take and wait time between each sample. 
-def sampler(samples, time):
+def sampler(samples, wtime):
 	sampleL = []
 	err = 0
 	for i in range(0, samples):
 		sdist = get_distance()
 		if sdist != 1000 and sdist > nearDistance:
 			sampleL.append(sdist)
-			time.sleep(time)
+			time.sleep(wtime)
 		else:
 			err += 1
-			time.sleep(time)
+			time.sleep(wtime)
 	if len(sampleL) == 0:
 		print ("Rapid averaging failed.")
 		return 1000
@@ -136,7 +136,7 @@ try:
                         pygame.mixer.music.play()
 			
 		# Take twenty distance measurements without waiting between measurements and average them.
-		logicDistance = sampler(20) 
+		logicDistance = sampler(20, 0) 
 
 		if logicDistance == 1000:
 			print(colored("Sensor Error", 'red'))
@@ -151,8 +151,8 @@ try:
 			rewind_counter = 0
 			print("Target detected at  ", logicDistance, " cm")
 			print(colored('Sampling target distance over 3 seconds. Please wait...', 'green'))
-			while sampler(100) < triggerDistance:
-				smoothcap = sampler(100)
+			while sampler(100, 0) < triggerDistance:
+				smoothcap = sampler(100, 0)
 				if pygame.mixer.music.get_busy() == 0:
                                         player.set_position(0)
                                         pygame.mixer.music.play()
